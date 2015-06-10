@@ -355,17 +355,14 @@
     },
 
     renderTimePicker = function(num_options, selected_val, select_class, display_func) {
-        var to_return = '<td><select class="pika-select '+select_class+'">';
-        for (var i=0; i<num_options; i++) {
-            to_return += '<option value="'+i+'" '+(i==selected_val ? 'selected' : '')+'>'+display_func(i)+'</option>'
-        }
-        to_return += '</select></td>';
-        return to_return;
+        return "<tr>"
+        + "<td><input type='range' min='0' max='"+num_options+"' value='"+selected_val+"' step='1' class='pika-select "+select_class+"'></td>"
+        + "<td><div class='pika-time-bubble'>"+display_func(selected_val)+"</div></td></tr>";
     },
 
     renderTime = function(hh, mm, ss, opts)
     {
-        var to_return = '<table cellpadding="0" cellspacing="0" class="pika-time"><tbody><tr>' +
+        var to_return = '<table cellpadding="0" cellspacing="0"><tbody>' +
             renderTimePicker(24, hh, 'pika-select-hour', function(i) {
                 if (opts.use24hour) {
                     return i;
@@ -379,15 +376,12 @@
                         return to_return;
                     }
                 }
-            }) +
-            '<td>:</td>' +
-            renderTimePicker(60, mm, 'pika-select-minute', function(i) { if (i < 10) return "0" + i; return i });
+            }) + renderTimePicker(60, mm, 'pika-select-minute', function(i) { if (i < 10) return "0" + i; return i });
 
         if (opts.showSeconds) {
-            to_return += '<td>:</td>' +
-                renderTimePicker(60, ss, 'pika-select-second', function(i) { if (i < 10) return "0" + i; return i });
+            to_return += renderTimePicker(60, ss, 'pika-select-second', function(i) { if (i < 10) return "0" + i; return i });
         }
-        return to_return + '</tr></tbody></table>';
+        return to_return + '</tbody></table>';
     },
 
 
@@ -540,7 +534,7 @@
             do {
                 if (pEl.classList.contains('pika-single') ||
                     pEl === opts.trigger ||
-                    (opts.showTime && pEl.classList.contains('pika-time-container'))) {
+                    (opts.showTime && pEl.classList.contains('pika-time'))) {
                     return;
                 }
             }
@@ -924,7 +918,7 @@
             }
 
             if (opts.showTime) {
-                html += '<div class="pika-time-container">' +
+                html += '<div class="pika-time">' +
                         renderTime(
                             this._d ? this._d.getHours() : 0,
                             this._d ? this._d.getMinutes() : 0,
