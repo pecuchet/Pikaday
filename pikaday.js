@@ -34,72 +34,24 @@
      * feature detection and helper functions
      */
     var hasMoment = typeof moment === 'function',
-
-    hasEventListeners = !!window.addEventListener,
-
-    document = window.document,
-
-    sto = window.setTimeout,
-
-    addEvent = function(el, e, callback, capture)
-    {
-        if (hasEventListeners) {
-            el.addEventListener(e, callback, !!capture);
-        } else {
-            el.attachEvent('on' + e, callback);
-        }
-    },
-
-    removeEvent = function(el, e, callback, capture)
-    {
-        if (hasEventListeners) {
-            el.removeEventListener(e, callback, !!capture);
-        } else {
-            el.detachEvent('on' + e, callback);
-        }
-    },
+        w = window,
+        d = w.document,
+        sto = w.setTimeout,
 
     fireEvent = function(el, eventName, data)
     {
         var ev;
 
-        if (document.createEvent) {
-            ev = document.createEvent('HTMLEvents');
+        if (d.createEvent) {
+            ev = d.createEvent('HTMLEvents');
             ev.initEvent(eventName, true, false);
             ev = extend(ev, data);
             el.dispatchEvent(ev);
         } else if (document.createEventObject) {
-            ev = document.createEventObject();
+            ev = d.createEventObject();
             ev = extend(ev, data);
             el.fireEvent('on' + eventName, ev);
         }
-    },
-
-    trim = function(str)
-    {
-        return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g,'');
-    },
-
-    hasClass = function(el, cn)
-    {
-        return (' ' + el.className + ' ').indexOf(' ' + cn + ' ') !== -1;
-    },
-
-    addClass = function(el, cn)
-    {
-        if (!hasClass(el, cn)) {
-            el.className = (el.className === '') ? cn : el.className + ' ' + cn;
-        }
-    },
-
-    removeClass = function(el, cn)
-    {
-        el.className = trim((' ' + el.className + ' ').replace(' ' + cn + ' ', ' '));
-    },
-
-    isArray = function(obj)
-    {
-        return (/Array/).test(Object.prototype.toString.call(obj));
     },
 
     isDate = function(obj)
@@ -150,7 +102,7 @@
                         to[prop] = new Date(from[prop].getTime());
                     }
                 }
-                else if (isArray(from[prop])) {
+                else if (Array.isArray(from[prop])) {
                     if (overwrite) {
                         to[prop] = from[prop].slice(0);
                     }
@@ -358,7 +310,7 @@
         }
         monthHtml = '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select></div>';
 
-        if (isArray(opts.yearRange)) {
+        if (Array.isArray(opts.yearRange)) {
             i = opts.yearRange[0];
             j = opts.yearRange[1] + 1;
         } else {
@@ -453,14 +405,14 @@
             if (!self._v) {
                 return;
             }
-            e = e || window.event;
-            var target = e.target || e.srcElement;
+            e = e || w.event;
+            var target = e.target;
             if (!target) {
                 return;
             }
 
-            if (!hasClass(target.parentNode, 'is-disabled')) {
-                if (hasClass(target, 'pika-button') && !hasClass(target, 'is-empty')) {
+            if (!target.parentNode.classList.contains('is-disabled')) {
+                if (target.classList.contains('pika-button') && !target.classList.contains('is-empty')) {
                     var newDate = new Date(
                             target.getAttribute('data-pika-year'),
                             target.getAttribute('data-pika-month'),
@@ -482,20 +434,15 @@
                     }
                     return;
                 }
-                else if (hasClass(target, 'pika-prev')) {
+                else if (target.classList.contains('pika-prev')) {
                     self.prevMonth();
                 }
-                else if (hasClass(target, 'pika-next')) {
+                else if (target.classList.contains('pika-next')) {
                     self.nextMonth();
                 }
             }
-            if (!hasClass(target, 'pika-select')) {
-                if (e.preventDefault) {
-                    e.preventDefault();
-                } else {
-                    e.returnValue = false;
-                    return false;
-                }
+            if (!target.classList.contains('pika-select')) {
+                e.preventDefault();
             } else {
                 self._c = true;
             }
@@ -503,24 +450,24 @@
 
         self._onChange = function(e)
         {
-            e = e || window.event;
-            var target = e.target || e.srcElement;
+            e = e || w.event;
+            var target = e.target;
             if (!target) {
                 return;
             }
-            if (hasClass(target, 'pika-select-month')) {
+            if (target.classList.contains('pika-select-month')) {
                 self.gotoMonth(target.value);
             }
-            else if (hasClass(target, 'pika-select-year')) {
+            else if (target.classList.contains('pika-select-year')) {
                 self.gotoYear(target.value);
             }
-            else if (hasClass(target, 'pika-select-hour')) {
+            else if (target.classList.contains('pika-select-hour')) {
                 self.setTime(target.value);
             }
-            else if (hasClass(target, 'pika-select-minute')) {
+            else if (target.classList.contains('pika-select-minute')) {
                 self.setTime(null, target.value);
             }
-            else if (hasClass(target, 'pika-select-second')) {
+            else if (target.classList.contains('pika-select-second')) {
                 self.setTime(null, null, target.value);
             }
         };
@@ -560,9 +507,9 @@
         self._onInputBlur = function()
         {
             // IE allows pika div to gain focus; catch blur the input field
-            var pEl = document.activeElement;
+            var pEl = d.activeElement;
             do {
-                if (hasClass(pEl, 'pika-single')) {
+                if (pEl.classList.contains( 'pika-single')) {
                     return;
                 }
             }
@@ -578,22 +525,22 @@
 
         self._onClick = function(e)
         {
-            e = e || window.event;
-            var target = e.target || e.srcElement,
+            e = e || w.event;
+            var target = e.target,
                 pEl = target;
             if (!target) {
                 return;
             }
-            if (!hasEventListeners && hasClass(target, 'pika-select')) {
+            if ( target.classList.contains('pika-select') ) {
                 if (!target.onchange) {
                     target.setAttribute('onchange', 'return;');
-                    addEvent(target, 'change', self._onChange);
+                    target.addEventListener( 'change', self._onChange, false );
                 }
             }
             do {
-                if (hasClass(pEl, 'pika-single') ||
+                if (pEl.classList.contains('pika-single') ||
                     pEl === opts.trigger ||
-                    (opts.showTime && hasClass(pEl, 'pika-time-container'))) {
+                    (opts.showTime && pEl.classList.contains('pika-time-container'))) {
                     return;
                 }
             }
@@ -603,21 +550,21 @@
             }
         };
 
-        self.el = document.createElement('div');
+        self.el = d.createElement('div');
         self.el.className = 'pika-single' + (opts.isRTL ? ' is-rtl' : '') + (opts.theme ? ' ' + opts.theme : '');
 
-        addEvent(self.el, 'ontouchend' in document ? 'touchend' : 'mousedown', self._onMouseDown, true);
-        addEvent(self.el, 'change', self._onChange);
+        self.el.addEventListener( 'ontouchend' in d ? 'touchend' : 'mousedown', self._onMouseDown, true);
+        self.el.addEventListener( 'change', self._onChange, false );
 
         if (opts.field) {
             if (opts.container) {
                 opts.container.appendChild(self.el);
             } else if (opts.bound) {
-                document.body.appendChild(self.el);
+                d.body.appendChild(self.el);
             } else {
                 opts.field.parentNode.insertBefore(self.el, opts.field.nextSibling);
             }
-            addEvent(opts.field, 'change', self._onInputChange);
+            opts.field.addEventListener( 'change', self._onInputChange, false );
 
             if (!opts.defaultDate) {
                 if (hasMoment && opts.field.value) {
@@ -644,9 +591,9 @@
         if (opts.bound) {
             this.hide();
             self.el.className += ' is-bound';
-            addEvent(opts.trigger, 'click', self._onInputClick);
-            addEvent(opts.trigger, 'focus', self._onInputFocus);
-            addEvent(opts.trigger, 'blur', self._onInputBlur);
+            opts.trigger.addEventListener( 'click', self._onInputClick, false );
+            opts.trigger.addEventListener( 'focus', self._onInputFocus, false );
+            opts.trigger.addEventListener( 'blur', self._onInputBlur, false );
         } else {
             this.show();
         }
@@ -705,7 +652,7 @@
                 opts.maxMonth = opts.maxDate.getMonth();
             }
 
-            if (isArray(opts.yearRange)) {
+            if (Array.isArray(opts.yearRange)) {
                 var fallback = new Date().getFullYear() - 10;
                 opts.yearRange[0] = parseInt(opts.yearRange[0], 10) || fallback;
                 opts.yearRange[1] = parseInt(opts.yearRange[1], 10) || fallback;
@@ -951,6 +898,7 @@
             if (!this._v && !force) {
                 return;
             }
+
             var opts = this._o,
                 minYear = opts.minYear,
                 maxYear = opts.maxYear,
@@ -1008,15 +956,13 @@
             if (this._o.container) return;
             var field = this._o.trigger, pEl = field,
             width = this.el.offsetWidth, height = this.el.offsetHeight,
-            viewportWidth = window.innerWidth || document.documentElement.clientWidth,
-            viewportHeight = window.innerHeight || document.documentElement.clientHeight,
-            scrollTop = window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop,
+            scrollTop = w.pageYOffset,
             left, top, clientRect;
 
             if (typeof field.getBoundingClientRect === 'function') {
                 clientRect = field.getBoundingClientRect();
-                left = clientRect.left + window.pageXOffset;
-                top = clientRect.bottom + window.pageYOffset;
+                left = clientRect.left + w.pageXOffset;
+                top = clientRect.bottom + w.pageYOffset;
             } else {
                 left = pEl.offsetLeft;
                 top  = pEl.offsetTop + pEl.offsetHeight;
@@ -1027,7 +973,7 @@
             }
 
             // default position is bottom & left
-            if ((this._o.reposition && left + width > viewportWidth) ||
+            if ((this._o.reposition && left + width > w.innerWidth) ||
                 (
                     this._o.position.indexOf('right') > -1 &&
                     left - width + field.offsetWidth > 0
@@ -1035,7 +981,7 @@
             ) {
                 left = left - width + field.offsetWidth;
             }
-            if ((this._o.reposition && top + height > viewportHeight + scrollTop) ||
+            if ((this._o.reposition && top + height > w.innerHeight + scrollTop) ||
                 (
                     this._o.position.indexOf('top') > -1 &&
                     top - height - field.offsetHeight > 0
@@ -1111,11 +1057,11 @@
         show: function()
         {
             if (!this._v) {
-                removeClass(this.el, 'is-hidden');
+                this.el.classList.remove('is-hidden');
                 this._v = true;
                 this.draw();
                 if (this._o.bound) {
-                    addEvent(document, 'click', this._onClick);
+                    d.addEventListener( 'click', this._onClick, false );
                     this.adjustPosition();
                 }
                 if (typeof this._o.onOpen === 'function') {
@@ -1129,12 +1075,12 @@
             var v = this._v;
             if (v !== false) {
                 if (this._o.bound) {
-                    removeEvent(document, 'click', this._onClick);
+                    d.removeEventListener( 'click', this._onClick );
                 }
                 this.el.style.position = 'static'; // reset
                 this.el.style.left = 'auto';
                 this.el.style.top = 'auto';
-                addClass(this.el, 'is-hidden');
+                this.el.classList.add('is-hidden');
                 this._v = false;
                 if (v !== undefined && typeof this._o.onClose === 'function') {
                     this._o.onClose.call(this);
@@ -1148,14 +1094,14 @@
         destroy: function()
         {
             this.hide();
-            removeEvent(this.el, 'mousedown', this._onMouseDown, true);
-            removeEvent(this.el, 'change', this._onChange);
+            this.el.removeEventListener( 'mousedown', this._onMouseDown, true);
+            this.el.removeEventListener( 'change', this._onChange );
             if (this._o.field) {
-                removeEvent(this._o.field, 'change', this._onInputChange);
+                this._o.field.removeEventListener( 'change', this._onInputChange );
                 if (this._o.bound) {
-                    removeEvent(this._o.trigger, 'click', this._onInputClick);
-                    removeEvent(this._o.trigger, 'focus', this._onInputFocus);
-                    removeEvent(this._o.trigger, 'blur', this._onInputBlur);
+                    this._o.field.removeEventListener( 'click', this._onInputClick );
+                    this._o.field.removeEventListener( 'focus', this._onInputFocus );
+                    this._o.field.removeEventListener( 'blur', this._onInputBlur );
                 }
             }
             if (this.el.parentNode) {
