@@ -534,7 +534,7 @@
             if ( target.classList.contains('pika-select') ) {
                 if (!target.onchange) {
                     target.setAttribute('onchange', 'return;');
-                    target.addEventListener( 'change', self._onChange, false );
+                    target.addEventListener( 'change', self._onChange );
                 }
             }
             do {
@@ -554,7 +554,7 @@
         self.el.className = 'pika-single' + (opts.isRTL ? ' is-rtl' : '') + (opts.theme ? ' ' + opts.theme : '');
 
         self.el.addEventListener( 'ontouchend' in d ? 'touchend' : 'mousedown', self._onMouseDown, true);
-        self.el.addEventListener( 'change', self._onChange, false );
+        self.el.addEventListener( 'change', self._onChange );
 
         if (opts.field) {
             if (opts.container) {
@@ -564,7 +564,7 @@
             } else {
                 opts.field.parentNode.insertBefore(self.el, opts.field.nextSibling);
             }
-            opts.field.addEventListener( 'change', self._onInputChange, false );
+            opts.field.addEventListener( 'change', self._onInputChange );
 
             if (!opts.defaultDate) {
                 if (hasMoment && opts.field.value) {
@@ -591,9 +591,9 @@
         if (opts.bound) {
             this.hide();
             self.el.className += ' is-bound';
-            opts.trigger.addEventListener( 'click', self._onInputClick, false );
-            opts.trigger.addEventListener( 'focus', self._onInputFocus, false );
-            opts.trigger.addEventListener( 'blur', self._onInputBlur, false );
+            opts.trigger.addEventListener( 'click', self._onInputClick );
+            opts.trigger.addEventListener( 'focus', self._onInputFocus );
+            opts.trigger.addEventListener( 'blur', self._onInputBlur );
         } else {
             this.show();
         }
@@ -1061,7 +1061,7 @@
                 this._v = true;
                 this.draw();
                 if (this._o.bound) {
-                    d.addEventListener( 'click', this._onClick, false );
+                    d.addEventListener( 'click', this._onClick );
                     this.adjustPosition();
                 }
                 if (typeof this._o.onOpen === 'function') {
