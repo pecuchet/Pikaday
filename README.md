@@ -5,7 +5,7 @@ Pikaday - with Time Range Inputs
 This is an ie10+ fork of [Owen Mead-Robins'][owenmead] version of [David Bushell's][david Pika] Pikaday,
 it does the same but with HTML5 range inputs.
 
-![Range input example](https://raw.github.com/pecuchet/Pikaday/branch/tree/master/examples/range_input_example.png)
+![Range input example](examples/range_input_example.png)
 
 =======
 This is an ie10+ fork of [Owen Mead-Robins'][owenmead] version of [dbushell/Pikaday][david Pika],
