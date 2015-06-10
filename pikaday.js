@@ -1,39 +1,38 @@
-/*!
- * Pikaday
- *
- * Copyright © 2014 David Bushell | BSD & MIT license | https://github.com/dbushell/Pikaday
- */
-
+/*! Pikaday | Copyright © 2014 David Bushell | BSD & MIT license | https://github.com/dbushell/Pikaday */
 (function (root, factory)
 {
     'use strict';
-
-    var moment;
+    var moment, backbone;
+    // Load moment.js and backbone as an optional dependencies
     if (typeof exports === 'object') {
         // CommonJS module
-        // Load moment.js as an optional dependency
-        try { moment = require('moment'); } catch (e) {}
-        module.exports = factory(moment);
+        try {
+            moment = require('moment');
+            backbone = require('backbone');
+        } catch (e) {}
+        module.exports = factory(moment,backbone);
     } else if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(function (req)
-        {
-            // Load moment.js as an optional dependency
-            var id = 'moment';
-            try { moment = req(id); } catch (e) {}
-            return factory(moment);
+        define(function (req) {
+            req = req || require;
+            try {
+                moment = req('moment');
+                backbone = req('backbone');
+            } catch (e) {}
+            return factory(moment, backbone);
         });
     } else {
-        root.Pikaday = factory(root.moment);
+        root.Pikaday = factory(root.moment, root.backbone);
     }
-}(this, function (moment)
+}(this, function (moment, backbone)
 {
     'use strict';
 
     /**
      * feature detection and helper functions
      */
-    var hasMoment = typeof moment === 'function',
+    var hasBackbone = typeof backbone === 'object',
+        hasMoment = typeof moment === 'function',
         w = window,
         d = w.document,
         sto = w.setTimeout,
@@ -503,7 +502,7 @@
             // IE allows pika div to gain focus; catch blur the input field
             var pEl = d.activeElement;
             do {
-                if (pEl.classList.contains( 'pika-single')) {
+                if ( pEl.classList && pEl.classList.contains( 'pika-single')) {
                     return;
                 }
             }
