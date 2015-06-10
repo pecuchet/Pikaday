@@ -767,6 +767,10 @@
 
             this.gotoDate(this._d);
 
+            if ( hasBackbone ) {
+                backbone.trigger( 'pikaday:change', this._d, this );
+            }
+
             if (this._o.field) {
                 this._o.field.value = this.toString();
                 fireEvent(this._o.field, 'change', { firedBy: this });

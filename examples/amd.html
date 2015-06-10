@@ -30,15 +30,9 @@
 
     require.config({
         baseUrl: '../',
-        paths: {
-            underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min',
-            backbone: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.1/backbone-min'
-        },
         // To get timely, correct error triggers in IE, force a define/shim exports check.
         enforceDefine: true
     });
-    define('jquery', function() {} );
-    require(['backbone']);
     require(['pikaday'], function(Pikaday)
     {
         var picker = new Pikaday(
